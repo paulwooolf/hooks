@@ -27,6 +27,20 @@ const App = () => {
     }
 };
 
+const usePlanetInfo = (id) => {
+    const [ name, setName ] = useState(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch(`https://swapi.dev/api/planets/${id}`)
+            .then(res => res.json())
+            .then(data => !cancelled && setName(data.name) );
+        return () => cancelled = true;
+    }, [id]);
+
+    return name;
+};
+
 const Notification = () => {
     const [val, setVal] = useState('Hello');
 
@@ -49,15 +63,7 @@ const HookCounter = ({value}) => {
 
 const PlanetInfo = ({ id }) => {
 
-    const [ name, setName ] = useState(null);
-
-    useEffect(() => {
-        let cancelled = false;
-        fetch(`https://swapi.dev/api/planets/${id}`)
-            .then(res => res.json())
-            .then(data => !cancelled && setName(data.name) );
-        return () => cancelled = true;
-    }, [id])
+    const name = usePlanetInfo(id);
 
     return (
         <div>{id} - {name}</div>
