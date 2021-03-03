@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 const App = () => {
-    const [value, setValue] = useState(0);
+    const [value, setValue] = useState(1);
     const [visible, toggleVisible] = useState(true);
 
 
@@ -15,6 +15,7 @@ const App = () => {
                 <button onClick={() => setValue((s) => s+1)}>+</button>
                 <button onClick={() => setValue((s) => s-1)}>-</button>
                 <button onClick={() => toggleVisible(false)}>hide</button>
+                <PlanetInfo id={value} />
             </div>
         )
     } else {
@@ -43,6 +44,23 @@ const HookCounter = ({value}) => {
 
     return (
             <p>{ value }</p>
+    )
+}
+
+const PlanetInfo = ({ id }) => {
+
+    const [ name, setName ] = useState(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        fetch(`https://swapi.dev/api/planets/${id}`)
+            .then(res => res.json())
+            .then(data => !cancelled && setName(data.name) );
+        return () => cancelled = true;
+    }, [id])
+
+    return (
+        <div>{id} - {name}</div>
     )
 }
 
